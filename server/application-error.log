@@ -1,0 +1,15 @@
+2026-07-15T09:36:40.400Z
+Submit application error:
+Class constructor ObjectId cannot be invoked without 'new'
+TypeError: Class constructor ObjectId cannot be invoked without 'new'
+    at submitApplication (C:\Users\samaya\OneDrive\Desktop\govVerify\server\controllers\applicationController.js:25:37)
+    at Layer.handleRequest (C:\Users\samaya\OneDrive\Desktop\govVerify\server\node_modules\router\lib\layer.js:152:17)
+    at next (C:\Users\samaya\OneDrive\Desktop\govVerify\server\node_modules\router\lib\route.js:157:13)
+    at done (C:\Users\samaya\OneDrive\Desktop\govVerify\server\node_modules\multer\lib\make-middleware.js:70:7)
+    at indicateDone (C:\Users\samaya\OneDrive\Desktop\govVerify\server\node_modules\multer\lib\make-middleware.js:74:68)
+    at Multipart.<anonymous> (C:\Users\samaya\OneDrive\Desktop\govVerify\server\node_modules\multer\lib\make-middleware.js:258:7)
+    at Multipart.emit (node:events:508:28)
+    at emitCloseNT (node:internal/streams/destroy:148:10)
+    at process.processTicksAndRejections (node:internal/process/task_queues:88:21)
+Mongoose readyState: 1
+

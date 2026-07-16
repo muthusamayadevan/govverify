@@ -3,6 +3,8 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardCitizen from './pages/DashboardCitizen';
 import DashboardOfficer from './pages/DashboardOfficer';
+import ApplyApplication from './pages/ApplyApplication';
+import MyApplications from './pages/MyApplications';
 import ProtectedRoute from './components/ProtectedRoute';
 import Unauthorized from './pages/Unauthorized';
 
@@ -17,6 +19,22 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={["citizen"]}>
               <DashboardCitizen />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/apply"
+          element={
+            <ProtectedRoute allowedRoles={["citizen"]}>
+              <ApplyApplication />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-applications"
+          element={
+            <ProtectedRoute allowedRoles={["citizen"]}>
+              <MyApplications />
             </ProtectedRoute>
           }
         />

@@ -78,6 +78,66 @@ const getMyApplications = async (req, res) => {
   }
 };
 
+const getPendingApplications = async (req, res) => {
+  try {
+    const applications = await Application.find({ status: 'pending' })
+      .sort({ createdAt: 1 })
+      .populate('applicant', 'name email');
+    return res.json(applications);
+  } catch (error) {
+    console.error('Get pending applications error:', error);
+    return res.status(500).json({ message: 'Server error fetching pending applications' });
+  }
+};
+
+const getAllApplicationsForOfficer = async (req, res) => {
+  try {
+    const applications = await Application.find()
+      .sort({ createdAt: -1 })
+      .populate('applicant', 'name email');
+    return res.json(applications);
+  } catch (error) {
+    console.error('Get all applications for officer error:', error);
+    return res.status(500).json({ message: 'Server error fetching applications' });
+  }
+};
+
+const reviewApplication = async (req, res) => {
+  const { id } = req.params;
+  const { decision, remarks } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'Invalid application id' });
+  }
+
+  if (!['approved', 'rejected'].includes(decision)) {
+    return res.status(400).json({ message: "Decision must be 'approved' or 'rejected'" });
+  }
+
+  try {
+    const application = await Application.findById(id);
+    if (!application) {
+      return res.status(404).json({ message: 'Application not found' });
+    }
+
+    if (application.status !== 'pending') {
+      return res.status(400).json({ message: 'Only pending applications can be reviewed' });
+    }
+
+    application.status = decision;
+    application.officerRemarks = remarks || '';
+    application.reviewedBy = req.user.id;
+
+    await application.save();
+    await application.populate('applicant', 'name email');
+
+    return res.json(application);
+  } catch (error) {
+    console.error('Review application error:', error);
+    return res.status(500).json({ message: 'Server error reviewing application' });
+  }
+};
+
 const getApplicationById = async (req, res) => {
   const { id } = req.params;
 
@@ -133,6 +193,9 @@ const downloadDocument = async (req, res) => {
 module.exports = {
   submitApplication,
   getMyApplications,
+  getPendingApplications,
+  getAllApplicationsForOfficer,
+  reviewApplication,
   getApplicationById,
   downloadDocument,
 };

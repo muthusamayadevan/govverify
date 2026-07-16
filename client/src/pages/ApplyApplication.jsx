@@ -40,62 +40,84 @@ const ApplyApplication = () => {
   };
 
   return (
-    <main style={{ maxWidth: 640, margin: '2rem auto', padding: '1rem' }}>
-      <h1>Apply for a Certificate</h1>
-      {success && <p style={{ color: 'green' }}>{success}</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <main className="min-h-screen bg-paper-50">
+      <header className="bg-ink-900 text-white px-8 py-4 flex justify-between items-center">
+        <div className="font-serif-display text-xl">GovVerify</div>
+        <div />
+      </header>
 
-      <form onSubmit={handleSubmit}>
-        <label style={{ display: 'block', marginBottom: '1rem' }}>
-          Certificate Type
-          <select
-            value={certificateType}
-            onChange={(e) => setCertificateType(e.target.value)}
-            style={{ display: 'block', width: '100%', padding: '0.5rem', marginTop: '0.5rem' }}
-          >
-            <option value="income">Income</option>
-            <option value="residence">Residence</option>
-            <option value="caste">Caste</option>
-            <option value="educational">Educational</option>
-          </select>
-        </label>
+      <section className="px-6 py-10 max-w-5xl mx-auto">
+        <div className="bg-white border border-slate-200 rounded-lg p-8 shadow-sm">
+          <h1 className="font-serif-display text-2xl text-ink-900 mb-6">Apply for a Certificate</h1>
 
-        <label style={{ display: 'block', marginBottom: '1rem' }}>
-          Details
-          <textarea
-            value={details}
-            onChange={(e) => setDetails(e.target.value)}
-            rows={5}
-            required
-            style={{ display: 'block', width: '100%', padding: '0.5rem', marginTop: '0.5rem' }}
-          />
-        </label>
+          {success && (
+            <div className="bg-verified-600/10 border border-verified-600 text-verified-600 px-4 py-3 rounded-md mb-6">
+              {success}
+            </div>
+          )}
+          {error && (
+            <div className="bg-seal-600/10 border border-seal-600 text-seal-600 px-4 py-3 rounded-md mb-6">
+              {error}
+            </div>
+          )}
 
-        <label style={{ display: 'block', marginBottom: '1rem' }}>
-          Documents (max 5)
-          <input
-            type="file"
-            multiple
-            accept="*"
-            onChange={handleFileChange}
-            style={{ display: 'block', marginTop: '0.5rem' }}
-          />
-        </label>
+          <form onSubmit={handleSubmit}>
+            <label className="block mb-6">
+              <span className="text-sm font-medium text-slate-500">Certificate Type</span>
+              <select
+                value={certificateType}
+                onChange={(e) => setCertificateType(e.target.value)}
+                className="w-full border border-slate-300 rounded-md px-4 py-2 mt-2 focus:outline-none focus:ring-2 focus:ring-ink-900 focus:border-ink-900"
+              >
+                <option value="income">Income</option>
+                <option value="residence">Residence</option>
+                <option value="caste">Caste</option>
+                <option value="educational">Educational</option>
+              </select>
+            </label>
 
-        <button type="submit" disabled={loading} style={{ padding: '0.75rem 1.2rem' }}>
-          {loading ? 'Submitting...' : 'Submit Application'}
-        </button>
-      </form>
+            <label className="block mb-6">
+              <span className="text-sm font-medium text-slate-500">Details</span>
+              <textarea
+                value={details}
+                onChange={(e) => setDetails(e.target.value)}
+                rows={5}
+                required
+                className="w-full border border-slate-300 rounded-md px-4 py-2 mt-2 focus:outline-none focus:ring-2 focus:ring-ink-900 focus:border-ink-900"
+              />
+            </label>
 
-      {success && (
-        <button
-          type="button"
-          onClick={() => navigate('/my-applications')}
-          style={{ marginTop: '1rem', padding: '0.75rem 1.2rem' }}
-        >
-          View My Applications
-        </button>
-      )}
+            <label className="block mb-6">
+              <span className="text-sm font-medium text-slate-500">Documents (max 5)</span>
+              <input
+                type="file"
+                multiple
+                accept="*"
+                onChange={handleFileChange}
+                className="mt-2 block w-full text-slate-700"
+              />
+            </label>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-ink-900 text-white font-semibold py-2.5 rounded-md hover:bg-opacity-90 transition"
+            >
+              {loading ? 'Submitting...' : 'Submit Application'}
+            </button>
+          </form>
+
+          {success && (
+            <button
+              type="button"
+              onClick={() => navigate('/my-applications')}
+              className="mt-6 w-full bg-white border border-slate-200 text-ink-900 font-medium py-2.5 rounded-md hover:bg-slate-50 transition"
+            >
+              View My Applications
+            </button>
+          )}
+        </div>
+      </section>
     </main>
   );
 };

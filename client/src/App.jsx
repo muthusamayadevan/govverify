@@ -3,6 +3,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import DashboardCitizen from './pages/DashboardCitizen';
 import DashboardOfficer from './pages/DashboardOfficer';
+import OfficerReviewDetail from './pages/OfficerReviewDetail';
 import ApplyApplication from './pages/ApplyApplication';
 import MyApplications from './pages/MyApplications';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -41,8 +42,16 @@ function App() {
         <Route
           path="/dashboard/officer"
           element={
-            <ProtectedRoute allowedRoles={["officer"]}>
+            <ProtectedRoute allowedRoles={["officer", "admin"]}>
               <DashboardOfficer />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/officer/review/:id"
+          element={
+            <ProtectedRoute allowedRoles={["officer", "admin"]}>
+              <OfficerReviewDetail />
             </ProtectedRoute>
           }
         />

@@ -2,12 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api/axios';
 
-const statusStyles = {
-  pending: { backgroundColor: '#e2e8f0', color: '#1f2937', padding: '0.25rem 0.5rem', borderRadius: '999px' },
-  approved: { backgroundColor: '#d1fae5', color: '#065f46', padding: '0.25rem 0.5rem', borderRadius: '999px' },
-  rejected: { backgroundColor: '#fee2e2', color: '#991b1b', padding: '0.25rem 0.5rem', borderRadius: '999px' },
-};
-
 const MyApplications = () => {
   const navigate = useNavigate();
   const [applications, setApplications] = useState([]);
@@ -32,43 +26,54 @@ const MyApplications = () => {
   }, []);
 
   return (
-    <main style={{ maxWidth: 900, margin: '2rem auto', padding: '1rem' }}>
-      <h1>My Applications</h1>
+    <main className="min-h-screen bg-paper-50">
+      <header className="bg-ink-900 text-white px-8 py-4 flex justify-between items-center">
+        <div className="font-serif-display text-xl">GovVerify</div>
+        <div />
+      </header>
 
-      {loading && <p>Loading applications...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {!loading && !error && applications.length === 0 && <p>No applications yet.</p>}
+      <section className="px-6 py-10 max-w-5xl mx-auto">
+        <div className="mb-8">
+          <h1 className="font-serif-display text-2xl text-ink-900">My Applications</h1>
+        </div>
 
-      {!loading && !error && applications.length > 0 && (
-        <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-          <thead>
-            <tr>
-              <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Reference ID</th>
-              <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Type</th>
-              <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Status</th>
-              <th style={{ textAlign: 'left', padding: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>Submitted</th>
-            </tr>
-          </thead>
-          <tbody>
-            {applications.map((application) => (
-              <tr
-                key={application._id}
-                onClick={() => navigate(`/applications/${application._id}`)}
-                style={{ cursor: 'pointer', backgroundColor: '#ffffff' }}
-              >
-                <td style={{ padding: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>{application.referenceId}</td>
-                <td style={{ padding: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>{application.certificateType}</td>
-                <td style={{ padding: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>
-                  <span style={statusStyles[application.status] || statusStyles.pending}>{application.status}</span>
-                </td>
-                <td style={{ padding: '0.75rem', borderBottom: '1px solid #e5e7eb' }}>
-                  {new Date(application.createdAt).toLocaleString()}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+        {loading && <p className="text-slate-500">Loading applications...</p>}
+        {error && <p className="text-seal-600">{error}</p>}
+        {!loading && !error && applications.length === 0 && (
+          <div className="text-center py-16 text-slate-500">No applications yet.</div>
+        )}
+
+        {!loading && !error && applications.length > 0 && (
+          <div className="space-y-4">
+            {applications.map((application) => {
+              const statusClass =
+                application.status === 'approved'
+                  ? 'bg-verified-600/10 text-verified-600'
+                  : application.status === 'rejected'
+                  ? 'bg-seal-600/10 text-seal-600'
+                  : 'bg-slate-100 text-slate-600';
+
+              return (
+                <button
+                  key={application._id}
+                  type="button"
+                  onClick={() => navigate(`/applications/${application._id}`)}
+                  className="w-full border border-slate-200 rounded-lg p-4 bg-white flex justify-between items-center hover:shadow-sm transition text-left"
+                >
+                  <div>
+                    <div className="font-mono text-sm text-slate-500">{application.referenceId}</div>
+                    <div className="font-medium text-ink-900 mt-1">{application.certificateType}</div>
+                    <div className="text-xs text-slate-500 mt-1">{new Date(application.createdAt).toLocaleString()}</div>
+                  </div>
+                  <span className={`px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide ${statusClass}`}>
+                    {application.status}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </section>
     </main>
   );
 };

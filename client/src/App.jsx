@@ -6,6 +6,7 @@ import DashboardOfficer from './pages/DashboardOfficer';
 import OfficerReviewDetail from './pages/OfficerReviewDetail';
 import ApplyApplication from './pages/ApplyApplication';
 import MyApplications from './pages/MyApplications';
+import VerifyCertificate from './pages/VerifyCertificate';
 import ProtectedRoute from './components/ProtectedRoute';
 import Unauthorized from './pages/Unauthorized';
 
@@ -55,6 +56,7 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/verify/:referenceId?" element={<VerifyCertificate />} />
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>

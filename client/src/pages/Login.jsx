@@ -89,6 +89,10 @@ const Login = () => {
             Don&apos;t have an account?{' '}
             <span className="text-white font-semibold underline">Register here</span>
           </p>
+          <p className="text-sm text-white/70 text-center mt-4">
+            Verifying a certificate?{' '}
+            <a href="/verify" className="text-white font-semibold underline">Check it here</a>
+          </p>
         </div>
       </div>
     </main>

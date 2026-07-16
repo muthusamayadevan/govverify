@@ -4,6 +4,8 @@ const mongoose = require('mongoose');
 const { Readable } = require('stream');
 const Application = require('../models/Application');
 const { getBucket } = require('../config/gridfs');
+const contract = require('../config/blockchain');
+const { hashCertificateData } = require('../utils/hashDocument');
 
 const submitApplication = async (req, res) => {
   const { certificateType, details } = req.body;
@@ -127,6 +129,43 @@ const reviewApplication = async (req, res) => {
     application.status = decision;
     application.officerRemarks = remarks || '';
     application.reviewedBy = req.user.id;
+
+    if (decision === 'approved') {
+      await application.save();
+
+      const certificateData = {
+        referenceId: application.referenceId,
+        applicantId: application.applicant,
+        certificateType: application.certificateType,
+        approvedAt: new Date().toISOString(),
+      };
+
+      let responseWarning = null;
+
+      try {
+        const certificateHash = hashCertificateData(certificateData);
+        console.log('Attempting blockchain issuance for referenceId:', application.referenceId);
+
+        const tx = await contract.issueCertificate(application.referenceId, certificateHash);
+        const receipt = await tx.wait();
+
+        console.log('Blockchain tx confirmed:', tx.hash);
+
+        application.certificateHash = certificateHash;
+        application.blockchainTxHash = tx.hash;
+        await application.save();
+      } catch (blockchainError) {
+        console.error('Blockchain issuance failed:', blockchainError.message);
+        responseWarning = 'Approved, but blockchain certificate issuance failed — retry needed';
+      }
+
+      await application.populate('applicant', 'name email');
+      const responseData = application.toObject();
+      if (responseWarning) {
+        responseData.warning = responseWarning;
+      }
+      return res.json(responseData);
+    }
 
     await application.save();
     await application.populate('applicant', 'name email');

@@ -52,6 +52,14 @@ const applicationSchema = new mongoose.Schema({
     type: String,
     unique: true,
   },
+  certificateHash: {
+    type: String,
+    default: '',
+  },
+  blockchainTxHash: {
+    type: String,
+    default: '',
+  },
   createdAt: {
     type: Date,
     default: Date.now,

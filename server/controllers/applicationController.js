@@ -104,6 +104,53 @@ const getAllApplicationsForOfficer = async (req, res) => {
   }
 };
 
+const verifyCertificatePublic = async (req, res) => {
+  const { referenceId } = req.params;
+
+  try {
+    const application = await Application.findOne({ referenceId }).populate('applicant', 'name');
+    if (!application) {
+      return res.status(404).json({ valid: false, message: 'No certificate found with this reference ID' });
+    }
+
+    if (application.status !== 'approved') {
+      return res.status(200).json({ valid: false, message: 'This application has not been approved yet' });
+    }
+
+    if (!application.certificateHash || !application.approvedAt) {
+      return res.status(200).json({
+        valid: false,
+        message: 'Certificate exists but blockchain verification data is missing',
+      });
+    }
+
+    const certificateData = {
+      referenceId: application.referenceId,
+      applicantId: application.applicant._id || application.applicant,
+      certificateType: application.certificateType,
+      approvedAt: application.approvedAt.toISOString(),
+    };
+
+    const recomputedHash = hashCertificateData(certificateData);
+    const [isValid, issuedAt] = await contract.verifyCertificate(application.referenceId, recomputedHash);
+
+    const issuedAtNumber = Number(issuedAt);
+    const issuedAtDate = issuedAtNumber > 0 ? new Date(issuedAtNumber * 1000).toISOString() : null;
+
+    return res.status(200).json({
+      valid: Boolean(isValid),
+      referenceId: application.referenceId,
+      certificateType: application.certificateType,
+      issuedAt: issuedAtDate,
+      applicantName: application.applicant?.name || '',
+      blockchainTxHash: application.blockchainTxHash,
+    });
+  } catch (error) {
+    console.error('Public certificate verification error:', error);
+    return res.status(500).json({ valid: false, message: 'Server error verifying certificate' });
+  }
+};
+
 const reviewApplication = async (req, res) => {
   const { id } = req.params;
   const { decision, remarks } = req.body;
@@ -131,13 +178,14 @@ const reviewApplication = async (req, res) => {
     application.reviewedBy = req.user.id;
 
     if (decision === 'approved') {
+      application.approvedAt = new Date();
       await application.save();
 
       const certificateData = {
         referenceId: application.referenceId,
         applicantId: application.applicant,
         certificateType: application.certificateType,
-        approvedAt: new Date().toISOString(),
+        approvedAt: application.approvedAt.toISOString(),
       };
 
       let responseWarning = null;
@@ -237,4 +285,5 @@ module.exports = {
   reviewApplication,
   getApplicationById,
   downloadDocument,
+  verifyCertificatePublic,
 };

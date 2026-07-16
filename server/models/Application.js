@@ -60,6 +60,10 @@ const applicationSchema = new mongoose.Schema({
     type: String,
     default: '',
   },
+  approvedAt: {
+    type: Date,
+    default: null,
+  },
   createdAt: {
     type: Date,
     default: Date.now,

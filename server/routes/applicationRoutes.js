@@ -7,6 +7,7 @@ const {
   getPendingApplications,
   getAllApplicationsForOfficer,
   reviewApplication,
+  verifyCertificatePublic,
   getApplicationById,
   downloadDocument,
 } = require('../controllers/applicationController');
@@ -18,6 +19,7 @@ router.get('/my', verifyToken, requireRole('citizen'), getMyApplications);
 router.get('/officer/pending', verifyToken, requireRole('officer', 'admin'), getPendingApplications);
 router.get('/officer/all', verifyToken, requireRole('officer', 'admin'), getAllApplicationsForOfficer);
 router.patch('/:id/review', verifyToken, requireRole('officer', 'admin'), reviewApplication);
+router.get('/verify/:referenceId', verifyCertificatePublic);
 router.get('/:id', verifyToken, getApplicationById);
 router.get('/document/:fileId', verifyToken, downloadDocument);
 

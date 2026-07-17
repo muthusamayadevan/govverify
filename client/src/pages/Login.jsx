@@ -31,13 +31,13 @@ const Login = () => {
   };
 
   return (
-    <main className="min-h-screen w-full relative overflow-hidden">
+    <main className="min-h-screen w-full relative">
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-fixed bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${govverify})` }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50" />
-      <div className="relative z-10 min-h-screen flex items-end justify-center px-4 pb-24">
+      <div className="relative z-10 min-h-screen flex items-end justify-center pb-10 md:pb-16 px-4">
         <div className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-8">
           <h1 className="font-serif-display text-2xl text-white mb-6 text-center">
             Sign in to your account

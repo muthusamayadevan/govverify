@@ -1,0 +1,44 @@
+Add a "Sign in with Google" button to GovVerify's Login page.
+
+1. Install the Google Identity Services library approach — no npm 
+   package needed, we'll load Google's script directly. In index.html 
+   (client root), add this inside the <head>: 
+   <script src="https://accounts.google.com/gsi/client" async></script>
+
+2. In src/pages/Login.jsx:
+   - Below the existing email/password form (after the "Login" button, 
+     before or after the "Don't have an account?" link), add a 
+     divider: a horizontal line with "OR" text in the middle 
+     (text-white/60, small, centered, with border lines on either 
+     side using border-white/20)
+   - Add a Google Sign-In button. Use useEffect on component mount to 
+     initialize Google's client: 
+     window.google.accounts.id.initialize({ client_id: import.meta.env.
+     VITE_GOOGLE_CLIENT_ID, callback: handleGoogleResponse }) and 
+     window.google.accounts.id.renderButton(document.getElementById
+     ('googleSignInDiv'), { theme: 'outline', size: 'large', width: 
+     '100%' })
+   - Add a div with id="googleSignInDiv" where the button should render
+   - Define handleGoogleResponse(response): takes response.credential, 
+     POSTs it to /auth/google using the existing axios instance, on 
+     success stores the token/user the same way the existing login() 
+     function in AuthContext does (call a new method in AuthContext, 
+     or reuse existing state-setting logic), then redirects based on 
+     role same as regular login (citizen -> /dashboard/citizen, etc.)
+
+3. In src/context/AuthContext.jsx, add a new method loginWithGoogle
+   (credential) that mirrors the existing login() function's logic 
+   (calls the API, stores token+user in localStorage and state) but 
+   posts to /auth/google instead of /auth/login, taking the Google 
+   credential instead of email/password
+
+4. Handle errors gracefully — if Google login fails, show the same 
+   error message styling already used for regular login failures
+
+Keep all existing email/password login functionality completely 
+untouched — this is purely additive.
+
+Explain briefly if there's anything I need to double check about the 
+VITE_GOOGLE_CLIENT_ID environment variable actually being accessible 
+in the browser (Vite has specific rules about which env vars get 
+exposed to client code).

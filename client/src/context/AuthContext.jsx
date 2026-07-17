@@ -36,6 +36,18 @@ export const AuthProvider = ({ children }) => {
     return returnedUser;
   };
 
+  const loginWithGoogle = async (credential) => {
+    const response = await api.post('/auth/google', { credential });
+    const { token: returnedToken, user: returnedUser } = response.data;
+
+    localStorage.setItem('token', returnedToken);
+    localStorage.setItem('user', JSON.stringify(returnedUser));
+    setToken(returnedToken);
+    setUser(returnedUser);
+
+    return returnedUser;
+  };
+
   const register = async (name, email, password, role) => {
     return api.post('/auth/register', { name, email, password, role });
   };
@@ -48,7 +60,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   const value = useMemo(
-    () => ({ user, token, login, register, logout, loading }),
+    () => ({ user, token, login, loginWithGoogle, register, logout, loading }),
     [user, token],
   );
 

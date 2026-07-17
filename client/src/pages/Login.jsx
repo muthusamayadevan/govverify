@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import govverify from '../assets/govverify.png';
@@ -7,10 +7,52 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const successMessage = location.state?.success || '';
+
+  const redirectByRole = (role) => {
+    if (role === 'citizen') navigate('/dashboard/citizen');
+    else if (role === 'officer') navigate('/dashboard/officer');
+    else navigate('/login');
+  };
+
+  const handleGoogleResponse = async (response) => {
+    setError('');
+    try {
+      const user = await loginWithGoogle(response.credential);
+      redirectByRole(user.role);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Google sign-in failed');
+    }
+  };
+
+  useEffect(() => {
+    const initGoogle = () => {
+      if (!window.google?.accounts?.id) return;
+      window.google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: handleGoogleResponse,
+      });
+      window.google.accounts.id.renderButton(
+        document.getElementById('googleSignInDiv'),
+        { theme: 'outline', size: 'large' },
+      );
+    };
+
+    if (window.google?.accounts?.id) {
+      // Script already loaded (e.g. navigating back to this page)
+      initGoogle();
+    } else {
+      // Script still loading — wait for it
+      const script = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+      if (script) {
+        script.addEventListener('load', initGoogle);
+        return () => script.removeEventListener('load', initGoogle);
+      }
+    }
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -18,13 +60,7 @@ const Login = () => {
 
     try {
       const user = await login(email, password);
-      if (user.role === 'citizen') {
-        navigate('/dashboard/citizen');
-      } else if (user.role === 'officer') {
-        navigate('/dashboard/officer');
-      } else {
-        navigate('/login');
-      }
+      redirectByRole(user.role);
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid credentials');
     }
@@ -84,6 +120,16 @@ const Login = () => {
               Login
             </button>
           </form>
+
+          {/* OR divider */}
+          <div className="flex items-center gap-3 my-5">
+            <div className="flex-1 border-t border-white/20" />
+            <span className="text-white/60 text-xs">OR</span>
+            <div className="flex-1 border-t border-white/20" />
+          </div>
+
+          {/* Google Sign-In button — rendered by Google's GSI script */}
+          <div id="googleSignInDiv" className="w-full" />
 
           <p className="text-sm text-white/70 text-center mt-6">
             Don&apos;t have an account?{' '}

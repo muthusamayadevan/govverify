@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const mongoose = require('mongoose');
+const QRCode = require('qrcode');
 const { Readable } = require('stream');
 const Application = require('../models/Application');
 const { getBucket } = require('../config/gridfs');
@@ -201,6 +202,16 @@ const reviewApplication = async (req, res) => {
 
         application.certificateHash = certificateHash;
         application.blockchainTxHash = tx.hash;
+
+        // QR code generation — non-blocking: a failure here must not prevent approval
+        try {
+          const verificationUrl = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/verify/${application.referenceId}`;
+          application.qrCodeDataUrl = await QRCode.toDataURL(verificationUrl);
+          console.log('QR code generated for referenceId:', application.referenceId);
+        } catch (qrError) {
+          console.error('QR code generation failed (non-fatal):', qrError.message);
+        }
+
         await application.save();
       } catch (blockchainError) {
         console.error('Blockchain issuance failed:', blockchainError.message);

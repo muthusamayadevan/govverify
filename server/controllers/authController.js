@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const register = async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -76,28 +79,21 @@ const googleLogin = async (req, res) => {
   const { credential } = req.body;
 
   if (!credential) {
-    return res.status(400).json({ message: 'Google credential is required' });
+    return res.status(400).json({ message: 'Google credential token is required' });
   }
 
   try {
-    const verificationUrl = `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`;
-    const googleResponse = await fetch(verificationUrl);
-    if (!googleResponse.ok) {
-      const errorBody = await googleResponse.text();
-      console.error('Google token verification failed:', errorBody);
-      return res.status(401).json({ message: 'Invalid Google credential' });
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const email = payload?.email;
+    const name = payload?.name || payload?.email;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Google credential did not contain an email' });
     }
-
-    const googleData = await googleResponse.json();
-
-    const expectedClientId = process.env.GOOGLE_CLIENT_ID;
-    if (expectedClientId && googleData.aud !== expectedClientId) {
-      console.error('Google credential audience mismatch:', googleData.aud);
-      return res.status(401).json({ message: 'Invalid Google client ID' });
-    }
-
-    const email = googleData.email;
-    const name = googleData.name || googleData.email;
 
     let user = await User.findOne({ email });
     if (!user) {
@@ -110,15 +106,8 @@ const googleLogin = async (req, res) => {
       await user.save();
     }
 
-    const payload = {
-      id: user._id,
-      email: user.email,
-      role: user.role,
-    };
-
-    const token = jwt.sign(payload, process.env.JWT_SECRET, {
-      expiresIn: '7d',
-    });
+    const jwtPayload = { id: user._id, email: user.email, role: user.role };
+    const token = jwt.sign(jwtPayload, process.env.JWT_SECRET, { expiresIn: '7d' });
 
     return res.json({
       token,
@@ -127,12 +116,11 @@ const googleLogin = async (req, res) => {
         name: user.name,
         email: user.email,
         role: user.role,
-        createdAt: user.createdAt,
       },
     });
   } catch (error) {
     console.error('Google login error:', error);
-    return res.status(500).json({ message: 'Server error during Google login' });
+    return res.status(401).json({ message: 'Invalid Google token' });
   }
 };
 

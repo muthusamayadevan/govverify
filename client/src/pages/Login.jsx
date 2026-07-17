@@ -12,8 +12,15 @@ const Login = () => {
   const location = useLocation();
   const successMessage = location.state?.success || '';
 
+  const redirectByRole = (role) => {
+    if (role === 'citizen') navigate('/dashboard/citizen');
+    else if (role === 'officer') navigate('/dashboard/officer');
+    else navigate('/login');
+  };
+
   const handleGoogleResponse = async (response) => {
     console.log('Google response received:', response);
+    setError('');
 
     const credential = response?.credential;
     if (!credential) {
@@ -27,13 +34,7 @@ const Login = () => {
     try {
       const user = await loginWithGoogle(credential);
       console.log('Google login succeeded:', user);
-      if (user?.role === 'citizen') {
-        navigate('/dashboard/citizen');
-      } else if (user?.role === 'officer') {
-        navigate('/dashboard/officer');
-      } else {
-        navigate('/dashboard/citizen');
-      }
+      redirectByRole(user.role);
     } catch (err) {
       if (err?.response?.data) {
         console.error('Google login API error response:', err.response.data);
@@ -47,18 +48,28 @@ const Login = () => {
   useEffect(() => {
     const googleButtonContainer = document.getElementById('googleSignInDiv');
 
-    if (window.google?.accounts?.id && googleButtonContainer) {
+    const initGoogle = () => {
+      if (!window.google?.accounts?.id || !googleButtonContainer) return;
       window.google.accounts.id.initialize({
         client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID',
         callback: handleGoogleResponse,
       });
-
       window.google.accounts.id.renderButton(googleButtonContainer, {
         theme: 'outline',
         size: 'large',
       });
-
       window.google.accounts.id.prompt();
+    };
+
+    if (window.google?.accounts?.id) {
+      initGoogle();
+      return;
+    }
+
+    const script = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+    if (script) {
+      script.addEventListener('load', initGoogle);
+      return () => script.removeEventListener('load', initGoogle);
     }
   }, []);
 
@@ -68,26 +79,20 @@ const Login = () => {
 
     try {
       const user = await login(email, password);
-      if (user.role === 'citizen') {
-        navigate('/dashboard/citizen');
-      } else if (user.role === 'officer') {
-        navigate('/dashboard/officer');
-      } else {
-        navigate('/login');
-      }
+      redirectByRole(user.role);
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid credentials');
     }
   };
 
   return (
-    <main className="min-h-screen w-full relative overflow-hidden">
+    <main className="min-h-screen w-full relative">
       <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-fixed bg-cover bg-center bg-no-repeat"
         style={{ backgroundImage: `url(${govverify})` }}
       />
       <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/20 to-black/50" />
-      <div className="relative z-10 min-h-screen flex items-end justify-center px-4 pb-24">
+      <div className="relative z-10 min-h-screen flex items-end justify-center pb-10 md:pb-16 px-4">
         <div className="w-full max-w-md bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl shadow-2xl p-8">
           <h1 className="font-serif-display text-2xl text-white mb-6 text-center">
             Sign in to your account
@@ -135,7 +140,14 @@ const Login = () => {
             </button>
           </form>
 
-          <div id="googleSignInDiv" className="mt-6"></div>
+          <div className="flex items-center gap-3 my-5">
+            <div className="flex-1 border-t border-white/20" />
+            <span className="text-white/60 text-xs">OR</span>
+            <div className="flex-1 border-t border-white/20" />
+          </div>
+
+          {/* Google Sign-In button — rendered by Google's GSI script */}
+          <div id="googleSignInDiv" className="w-full mt-6" />
 
           <p className="text-sm text-white/70 text-center mt-6">
             Don&apos;t have an account?{' '}

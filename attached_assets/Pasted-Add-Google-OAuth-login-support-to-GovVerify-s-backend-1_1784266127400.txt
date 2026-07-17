@@ -1,0 +1,45 @@
+Add Google OAuth login support to GovVerify's backend.
+
+1. Install the google-auth-library package in /server: npm install 
+   google-auth-library
+
+2. Update server/models/User.js:
+   - Make the 'password' field NOT required (it's currently required 
+     — change to required: false, or use a conditional required 
+     validator that only requires it if googleId is not present)
+   - Add a new field: googleId (String, unique, sparse: true — sparse 
+     allows multiple documents with no googleId without violating 
+     uniqueness)
+   - Add a new field: authProvider (String, enum: ['local', 'google'], 
+     default: 'local')
+
+3. In server/controllers/authController.js, add a new function 
+   googleLogin(req, res):
+   - Takes { credential } from req.body (this is the ID token Google's 
+     frontend button returns)
+   - Uses google-auth-library's OAuth2Client to verify the token 
+     against GOOGLE_CLIENT_ID from process.env
+   - Extract the verified payload: email, name, googleId (sub field 
+     from the payload)
+   - Check if a User already exists with this email:
+     - If exists and authProvider is 'local' (registered with 
+       password originally): link the account by setting googleId and 
+       keep authProvider as-is, OR return an error asking them to log 
+       in with password instead (choose: link automatically, it's 
+       simpler and better UX)
+     - If exists with authProvider 'google': just log them in
+     - If doesn't exist: create a new User with name, email, googleId, 
+       authProvider: 'google', role: 'citizen' (default — Google 
+       signup should default to citizen, not let people choose officer/
+       admin this way)
+   - Issue a JWT the same way the existing login() function does 
+     (same payload shape: id, role, email)
+   - Return { token, user: { id, name, email, role } } — same response 
+     shape as regular login for frontend consistency
+
+4. Add a route in server/routes/authRoutes.js: 
+   POST /google -> authController.googleLogin
+
+Explain briefly how token verification prevents someone from faking a 
+Google login (i.e. why we trust the credential rather than just 
+trusting whatever email the frontend sends).

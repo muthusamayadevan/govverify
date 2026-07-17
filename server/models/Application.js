@@ -64,6 +64,10 @@ const applicationSchema = new mongoose.Schema({
     type: Date,
     default: null,
   },
+  qrCodeDataUrl: {
+    type: String,
+    default: '',
+  },
   createdAt: {
     type: Date,
     default: Date.now,

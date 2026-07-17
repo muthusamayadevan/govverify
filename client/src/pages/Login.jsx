@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import govverify from '../assets/govverify.png';
@@ -7,10 +7,60 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const successMessage = location.state?.success || '';
+
+  const handleGoogleResponse = async (response) => {
+    console.log('Google response received:', response);
+
+    const credential = response?.credential;
+    if (!credential) {
+      console.error('Google response missing credential:', response);
+      setError('Google sign-in failed: no credential returned');
+      return;
+    }
+
+    console.log('Sending Google credential to API:', credential);
+
+    try {
+      const user = await loginWithGoogle(credential);
+      console.log('Google login succeeded:', user);
+      if (user?.role === 'citizen') {
+        navigate('/dashboard/citizen');
+      } else if (user?.role === 'officer') {
+        navigate('/dashboard/officer');
+      } else {
+        navigate('/dashboard/citizen');
+      }
+    } catch (err) {
+      if (err?.response?.data) {
+        console.error('Google login API error response:', err.response.data);
+      } else {
+        console.error('Google login error:', err);
+      }
+      setError(err.response?.data?.message || 'Google sign-in failed');
+    }
+  };
+
+  useEffect(() => {
+    const googleButtonContainer = document.getElementById('googleSignInDiv');
+
+    if (window.google?.accounts?.id && googleButtonContainer) {
+      window.google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID',
+        callback: handleGoogleResponse,
+      });
+
+      window.google.accounts.id.renderButton(googleButtonContainer, {
+        theme: 'outline',
+        size: 'large',
+      });
+
+      window.google.accounts.id.prompt();
+    }
+  }, []);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -84,6 +134,8 @@ const Login = () => {
               Login
             </button>
           </form>
+
+          <div id="googleSignInDiv" className="mt-6"></div>
 
           <p className="text-sm text-white/70 text-center mt-6">
             Don&apos;t have an account?{' '}

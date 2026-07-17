@@ -16,13 +16,22 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
-    minlength: 6,
+    required: false,
   },
   role: {
     type: String,
     enum: ['citizen', 'officer', 'admin'],
     default: 'citizen',
+  },
+  googleId: {
+    type: String,
+    unique: true,
+    sparse: true, // allows many docs with no googleId without violating uniqueness
+  },
+  authProvider: {
+    type: String,
+    enum: ['local', 'google'],
+    default: 'local',
   },
   createdAt: {
     type: Date,
@@ -31,7 +40,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre('save', async function () {
-  if (!this.isModified('password')) return;
+  if (!this.isModified('password') || !this.password) return;
   this.password = await bcrypt.hash(this.password, 10);
 });
 

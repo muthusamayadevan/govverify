@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
+const { OAuth2Client } = require('google-auth-library');
 const User = require('../models/User');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const register = async (req, res) => {
   const { name, email, password, role } = req.body;
@@ -72,7 +75,51 @@ const login = async (req, res) => {
   }
 };
 
+const googleLogin = async (req, res) => {
+  const { credential } = req.body;
+
+  if (!credential) {
+    return res.status(400).json({ message: 'Google credential token is required' });
+  }
+
+  try {
+    // Verify the ID token with Google — this is the trust boundary (see explanation below)
+    const ticket = await googleClient.verifyIdToken({
+      idToken: credential,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name } = payload;
+
+    let user = await User.findOne({ email });
+
+    if (user) {
+      // Existing account — link googleId if not already set, then sign in
+      if (!user.googleId) {
+        user.googleId = googleId;
+        await user.save();
+      }
+    } else {
+      // New user — create a citizen account (Google signup cannot choose officer/admin)
+      user = new User({ name, email, googleId, authProvider: 'google', role: 'citizen' });
+      await user.save();
+    }
+
+    const jwtPayload = { id: user._id, email: user.email, role: user.role };
+    const token = jwt.sign(jwtPayload, process.env.JWT_SECRET, { expiresIn: '7d' });
+
+    return res.json({
+      token,
+      user: { id: user._id, name: user.name, email: user.email, role: user.role },
+    });
+  } catch (error) {
+    console.error('Google login error:', error);
+    return res.status(401).json({ message: 'Invalid Google token' });
+  }
+};
+
 module.exports = {
   register,
   login,
+  googleLogin,
 };

@@ -12,6 +12,7 @@ const OfficerReviewDetail = () => {
   const [error, setError] = useState('');
   const [remarks, setRemarks] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [qrCodeDataUrl, setQrCodeDataUrl] = useState(null);
 
   useEffect(() => {
     const fetchApplication = async () => {
@@ -38,11 +39,15 @@ const OfficerReviewDetail = () => {
     setError('');
 
     try {
-      await api.patch(`/applications/${id}/review`, {
+      const response = await api.patch(`/applications/${id}/review`, {
         decision,
         remarks,
       });
-      navigate('/dashboard/officer');
+      if (decision === 'approved' && response.data?.qrCodeDataUrl) {
+        setQrCodeDataUrl(response.data.qrCodeDataUrl);
+      } else {
+        navigate('/dashboard/officer');
+      }
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to submit review');
     } finally {
@@ -131,6 +136,17 @@ const OfficerReviewDetail = () => {
                 </div>
               )}
             </div>
+
+            {qrCodeDataUrl && (
+              <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm flex flex-col items-center">
+                <img
+                  src={qrCodeDataUrl}
+                  alt="Certificate QR Code"
+                  className="w-40 h-40 mt-4 border border-slate-200 rounded-lg p-2 bg-white"
+                />
+                <p className="text-xs text-slate-500 mt-2">Scan to verify this certificate</p>
+              </div>
+            )}
 
             {application.status === 'pending' && (
               <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">

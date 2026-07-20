@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
 const DashboardOfficer = () => {
+  const { t, i18n } = useTranslation();
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [applications, setApplications] = useState([]);
@@ -34,39 +36,67 @@ const DashboardOfficer = () => {
   return (
     <main className="min-h-screen bg-paper-50">
       <header className="bg-ink-900 text-white px-8 py-4 flex justify-between items-center">
-        <div className="font-serif-display text-xl">GovVerify</div>
-        <button
-          type="button"
-          onClick={logout}
-          className="text-white border border-white/30 px-4 py-1.5 rounded-md hover:bg-white/10 transition"
-        >
-          Logout
-        </button>
+        <div className="font-serif-display text-xl cursor-pointer" onClick={() => navigate('/dashboard/officer')}>GovVerify</div>
+        <div className="flex items-center gap-4">
+          {/* Language Switcher */}
+          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => i18n.changeLanguage('en')}
+              className={`cursor-pointer px-2 py-0.5 rounded transition ${
+                i18n.language.startsWith('en')
+                  ? 'bg-white text-ink-900 shadow-sm'
+                  : 'text-white/70 hover:text-white'
+              }`}
+            >
+              EN
+            </button>
+            <span className="text-white/20">|</span>
+            <button
+              type="button"
+              onClick={() => i18n.changeLanguage('ta')}
+              className={`cursor-pointer px-2 py-0.5 rounded transition ${
+                i18n.language.startsWith('ta')
+                  ? 'bg-white text-ink-900 shadow-sm'
+                  : 'text-white/70 hover:text-white'
+              }`}
+            >
+              TA
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={logout}
+            className="text-white border border-white/30 px-4 py-1.5 rounded-md hover:bg-white/10 transition cursor-pointer"
+          >
+            {t('nav.logout')}
+          </button>
+        </div>
       </header>
 
       <section className="px-6 py-10 max-w-6xl mx-auto">
         <div className="text-center mb-10">
-          <h1 className="font-serif-display text-2xl text-ink-900">Welcome, Officer {user?.name}</h1>
+          <h1 className="font-serif-display text-2xl text-ink-900">{t('officer.welcome')} {user?.name}</h1>
           <p className="text-slate-500 mt-2">Review pending applications and approve or reject requests.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
           <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
             <div className="text-3xl font-bold text-ink-900">{pendingCount}</div>
-            <div className="text-sm text-slate-500 mt-2">Pending Review</div>
+            <div className="text-sm text-slate-500 mt-2">{t('officer.pendingReview')}</div>
           </div>
           <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
             <div className="text-3xl font-bold text-ink-900">{approvedCount}</div>
-            <div className="text-sm text-slate-500 mt-2">Approved</div>
+            <div className="text-sm text-slate-500 mt-2">{t('officer.approved')}</div>
           </div>
           <div className="bg-white border border-slate-200 rounded-lg p-4 shadow-sm">
             <div className="text-3xl font-bold text-ink-900">{rejectedCount}</div>
-            <div className="text-sm text-slate-500 mt-2">Rejected</div>
+            <div className="text-sm text-slate-500 mt-2">{t('officer.rejected')}</div>
           </div>
         </div>
 
         <div className="mb-6">
-          <h2 className="text-xl font-semibold text-ink-900">Review Queue</h2>
+          <h2 className="text-xl font-semibold text-ink-900">{t('officer.reviewQueue')}</h2>
           <p className="text-slate-500 mt-1">Click an application to inspect it and take action.</p>
         </div>
 
@@ -85,7 +115,7 @@ const DashboardOfficer = () => {
                   key={application._id}
                   type="button"
                   onClick={() => navigate(`/officer/review/${application._id}`)}
-                  className="w-full border border-slate-200 rounded-lg p-4 bg-white flex flex-col sm:flex-row sm:justify-between sm:items-center hover:shadow-sm transition text-left"
+                  className="w-full border border-slate-200 rounded-lg p-4 bg-white flex flex-col sm:flex-row sm:justify-between sm:items-center hover:shadow-sm transition cursor-pointer text-left"
                 >
                   <div>
                     <div className="font-mono text-sm text-slate-500">{application.referenceId}</div>

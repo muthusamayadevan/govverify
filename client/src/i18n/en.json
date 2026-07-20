@@ -1,0 +1,89 @@
+{
+  "appName": "GovVerify",
+  "tagline": "Digital Services & Document Verification Portal",
+  "nav": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "landing": {
+    "heroTagline": "Secure, verifiable government certificates — powered by blockchain",
+    "getStarted": "Get Started",
+    "verifyCertificate": "Verify a Certificate",
+    "howItWorks": "How GovVerify Works",
+    "step1Title": "Apply Online",
+    "step1Desc": "Submit your certificate application along with required supporting documents through our secure portal.",
+    "step2Title": "Officer Review",
+    "step2Desc": "Your submitted application and credentials are systematically verified by an authorized review officer.",
+    "step3Title": "Blockchain Certified",
+    "step3Desc": "A tamper-proof digital certificate is issued on the blockchain, featuring a unique QR code for instant off-line verification.",
+    "feat1Title": "Blockchain Secured",
+    "feat1Desc": "Cryptographic hash verification on the Ethereum blockchain guarantees certificate integrity and prevents forgery.",
+    "feat2Title": "Instant Verification",
+    "feat2Desc": "Verify any issued certificate immediately without logging in. Simply scan the QR code or enter the reference ID.",
+    "feat3Title": "Bilingual Support",
+    "feat3Desc": "User interfaces and certificates are fully localized in both English and Tamil for inclusive citizen access.",
+    "footerCopyright": "© 2026 GovVerify — Academic Prototype for Digital Governance",
+    "footerDisclaimer": "Not an official Government of India service"
+  },
+  "auth": {
+    "signInTitle": "Sign in to your account",
+    "createAccountTitle": "Create your account",
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "role": "Role",
+    "roleCitizen": "Citizen",
+    "roleOfficer": "Officer",
+    "loginButton": "Login",
+    "registerButton": "Register",
+    "or": "OR",
+    "googleSignIn": "Sign in with Google",
+    "noAccount": "Don't have an account?",
+    "registerHere": "Register here",
+    "haveAccount": "Already have an account?",
+    "loginHere": "Login here",
+    "verifyPrompt": "Verifying a certificate?",
+    "checkHere": "Check it here"
+  },
+  "dashboard": {
+    "welcome": "Welcome",
+    "applyForCertificate": "Apply for a Certificate",
+    "myApplications": "My Applications"
+  },
+  "apply": {
+    "title": "Apply for a Certificate",
+    "certificateType": "Certificate Type",
+    "details": "Details",
+    "documents": "Documents",
+    "submitButton": "Submit Application",
+    "viewMyApplications": "View My Applications"
+  },
+  "myApplications": {
+    "title": "My Applications",
+    "noApplications": "No applications yet",
+    "loading": "Loading applications...",
+    "statusPending": "Pending",
+    "statusApproved": "Approved",
+    "statusRejected": "Rejected"
+  },
+  "officer": {
+    "welcome": "Welcome, Officer",
+    "pendingReview": "Pending Review",
+    "approved": "Approved",
+    "rejected": "Rejected",
+    "reviewQueue": "Review Queue",
+    "applicantDetails": "Applicant Details",
+    "remarks": "Remarks",
+    "approveButton": "Approve",
+    "rejectButton": "Reject",
+    "scanToVerify": "Scan to verify this certificate"
+  },
+  "verify": {
+    "title": "Verify a Certificate",
+    "subtitle": "Enter a reference ID to check its authenticity",
+    "verifyButton": "Verify",
+    "verified": "Certificate Verified",
+    "verificationFailed": "Verification Failed"
+  }
+}

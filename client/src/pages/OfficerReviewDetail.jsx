@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext';
 import api from '../api/axios';
 
 const OfficerReviewDetail = () => {
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
@@ -65,14 +67,47 @@ const OfficerReviewDetail = () => {
   return (
     <main className="min-h-screen bg-paper-50">
       <header className="bg-ink-900 text-white px-8 py-4 flex justify-between items-center">
-        <div className="font-serif-display text-xl">GovVerify</div>
-        <button
-          type="button"
-          onClick={logout}
-          className="text-white border border-white/30 px-4 py-1.5 rounded-md hover:bg-white/10 transition"
+        <div
+          className="font-serif-display text-xl cursor-pointer"
+          onClick={() => navigate('/dashboard/officer')}
         >
-          Logout
-        </button>
+          GovVerify
+        </div>
+        <div className="flex items-center gap-4">
+          {/* Language Switcher */}
+          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => i18n.changeLanguage('en')}
+              className={`cursor-pointer px-2 py-0.5 rounded transition ${
+                i18n.language.startsWith('en')
+                  ? 'bg-white text-ink-900 shadow-sm'
+                  : 'text-white/70 hover:text-white'
+              }`}
+            >
+              EN
+            </button>
+            <span className="text-white/20">|</span>
+            <button
+              type="button"
+              onClick={() => i18n.changeLanguage('ta')}
+              className={`cursor-pointer px-2 py-0.5 rounded transition ${
+                i18n.language.startsWith('ta')
+                  ? 'bg-white text-ink-900 shadow-sm'
+                  : 'text-white/70 hover:text-white'
+              }`}
+            >
+              TA
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={logout}
+            className="text-white border border-white/30 px-4 py-1.5 rounded-md hover:bg-white/10 transition cursor-pointer"
+          >
+            {t('nav.logout')}
+          </button>
+        </div>
       </header>
 
       <section className="px-6 py-10 max-w-5xl mx-auto">
@@ -99,13 +134,13 @@ const OfficerReviewDetail = () => {
 
               <div className="mt-6 grid gap-4 md:grid-cols-2">
                 <div>
-                  <div className="text-slate-500 text-sm">Applicant</div>
-                  <div className="text-ink-900 font-medium">{application.applicant?.name}</div>
+                  <div className="text-slate-500 text-sm">{t('officer.applicantDetails')}</div>
+                  <div className="text-ink-900 font-medium mt-1">{application.applicant?.name}</div>
                   <div className="text-slate-500 text-sm mt-1">{application.applicant?.email}</div>
                 </div>
                 <div>
                   <div className="text-slate-500 text-sm">Submitted</div>
-                  <div className="text-ink-900 font-medium">{new Date(application.createdAt).toLocaleString()}</div>
+                  <div className="text-ink-900 font-medium mt-1">{new Date(application.createdAt).toLocaleString()}</div>
                 </div>
               </div>
 
@@ -131,7 +166,7 @@ const OfficerReviewDetail = () => {
 
               {application.status !== 'pending' && (
                 <div className="mt-6 bg-slate-50 border border-slate-200 rounded-lg p-4">
-                  <div className="text-slate-500 text-sm">Officer Remarks</div>
+                  <div className="text-slate-500 text-sm">{t('officer.remarks')}</div>
                   <p className="text-ink-900 mt-2 whitespace-pre-line">{application.officerRemarks || 'No remarks provided.'}</p>
                 </div>
               )}
@@ -144,14 +179,14 @@ const OfficerReviewDetail = () => {
                   alt="Certificate QR Code"
                   className="w-40 h-40 mt-4 border border-slate-200 rounded-lg p-2 bg-white"
                 />
-                <p className="text-xs text-slate-500 mt-2">Scan to verify this certificate</p>
+                <p className="text-xs text-slate-500 mt-2">{t('officer.scanToVerify')}</p>
               </div>
             )}
 
             {application.status === 'pending' && (
               <div className="bg-white border border-slate-200 rounded-lg p-6 shadow-sm">
                 <label className="block mb-3">
-                  <span className="text-sm font-medium text-slate-700">Remarks</span>
+                  <span className="text-sm font-medium text-slate-700">{t('officer.remarks')}</span>
                   <textarea
                     value={remarks}
                     onChange={(e) => setRemarks(e.target.value)}
@@ -165,17 +200,17 @@ const OfficerReviewDetail = () => {
                     type="button"
                     onClick={() => handleReview('approved')}
                     disabled={submitting}
-                    className="w-full sm:w-auto bg-verified-600 text-white font-semibold px-5 py-2.5 rounded-md hover:bg-verified-700 transition"
+                    className="w-full sm:w-auto bg-verified-600 text-white font-semibold px-5 py-2.5 rounded-md hover:bg-verified-700 transition cursor-pointer"
                   >
-                    Approve
+                    {t('officer.approveButton')}
                   </button>
                   <button
                     type="button"
                     onClick={() => handleReview('rejected')}
                     disabled={submitting}
-                    className="w-full sm:w-auto bg-seal-600 text-white font-semibold px-5 py-2.5 rounded-md hover:bg-seal-700 transition"
+                    className="w-full sm:w-auto bg-seal-600 text-white font-semibold px-5 py-2.5 rounded-md hover:bg-seal-700 transition cursor-pointer"
                   >
-                    Reject
+                    {t('officer.rejectButton')}
                   </button>
                 </div>
               </div>

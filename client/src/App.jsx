@@ -7,6 +7,7 @@ import OfficerReviewDetail from './pages/OfficerReviewDetail';
 import ApplyApplication from './pages/ApplyApplication';
 import MyApplications from './pages/MyApplications';
 import VerifyCertificate from './pages/VerifyCertificate';
+import LandingPage from './pages/LandingPage';
 import ProtectedRoute from './components/ProtectedRoute';
 import Unauthorized from './pages/Unauthorized';
 
@@ -14,6 +15,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route

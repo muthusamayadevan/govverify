@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../api/axios';
 
 const ApplyApplication = () => {
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [certificateType, setCertificateType] = useState('income');
   const [details, setDetails] = useState('');
@@ -42,13 +44,45 @@ const ApplyApplication = () => {
   return (
     <main className="min-h-screen bg-paper-50">
       <header className="bg-ink-900 text-white px-8 py-4 flex justify-between items-center">
-        <div className="font-serif-display text-xl">GovVerify</div>
-        <div />
+        <div
+          className="font-serif-display text-xl cursor-pointer"
+          onClick={() => navigate('/dashboard/citizen')}
+        >
+          GovVerify
+        </div>
+        <div className="flex items-center gap-4">
+          {/* Language Switcher */}
+          <div className="flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full text-xs font-semibold">
+            <button
+              type="button"
+              onClick={() => i18n.changeLanguage('en')}
+              className={`cursor-pointer px-2 py-0.5 rounded transition ${
+                i18n.language.startsWith('en')
+                  ? 'bg-white text-ink-900 shadow-sm'
+                  : 'text-white/70 hover:text-white'
+              }`}
+            >
+              EN
+            </button>
+            <span className="text-white/20">|</span>
+            <button
+              type="button"
+              onClick={() => i18n.changeLanguage('ta')}
+              className={`cursor-pointer px-2 py-0.5 rounded transition ${
+                i18n.language.startsWith('ta')
+                  ? 'bg-white text-ink-900 shadow-sm'
+                  : 'text-white/70 hover:text-white'
+              }`}
+            >
+              TA
+            </button>
+          </div>
+        </div>
       </header>
 
       <section className="px-6 py-10 max-w-5xl mx-auto">
         <div className="bg-white border border-slate-200 rounded-lg p-8 shadow-sm">
-          <h1 className="font-serif-display text-2xl text-ink-900 mb-6">Apply for a Certificate</h1>
+          <h1 className="font-serif-display text-2xl text-ink-900 mb-6">{t('apply.title')}</h1>
 
           {success && (
             <div className="bg-verified-600/10 border border-verified-600 text-verified-600 px-4 py-3 rounded-md mb-6">
@@ -63,7 +97,7 @@ const ApplyApplication = () => {
 
           <form onSubmit={handleSubmit}>
             <label className="block mb-6">
-              <span className="text-sm font-medium text-slate-500">Certificate Type</span>
+              <span className="text-sm font-medium text-slate-500">{t('apply.certificateType')}</span>
               <select
                 value={certificateType}
                 onChange={(e) => setCertificateType(e.target.value)}
@@ -77,7 +111,7 @@ const ApplyApplication = () => {
             </label>
 
             <label className="block mb-6">
-              <span className="text-sm font-medium text-slate-500">Details</span>
+              <span className="text-sm font-medium text-slate-500">{t('apply.details')}</span>
               <textarea
                 value={details}
                 onChange={(e) => setDetails(e.target.value)}
@@ -88,7 +122,7 @@ const ApplyApplication = () => {
             </label>
 
             <label className="block mb-6">
-              <span className="text-sm font-medium text-slate-500">Documents (max 5)</span>
+              <span className="text-sm font-medium text-slate-500">{t('apply.documents')} (max 5)</span>
               <input
                 type="file"
                 multiple
@@ -101,9 +135,9 @@ const ApplyApplication = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-ink-900 text-white font-semibold py-2.5 rounded-md hover:bg-opacity-90 transition"
+              className="w-full bg-ink-900 text-white font-semibold py-2.5 rounded-md hover:bg-opacity-90 transition cursor-pointer"
             >
-              {loading ? 'Submitting...' : 'Submit Application'}
+              {loading ? 'Submitting...' : t('apply.submitButton')}
             </button>
           </form>
 
@@ -111,9 +145,9 @@ const ApplyApplication = () => {
             <button
               type="button"
               onClick={() => navigate('/my-applications')}
-              className="mt-6 w-full bg-white border border-slate-200 text-ink-900 font-medium py-2.5 rounded-md hover:bg-slate-50 transition"
+              className="mt-6 w-full bg-white border border-slate-200 text-ink-900 font-medium py-2.5 rounded-md hover:bg-slate-50 transition cursor-pointer"
             >
-              View My Applications
+              {t('apply.viewMyApplications')}
             </button>
           )}
         </div>

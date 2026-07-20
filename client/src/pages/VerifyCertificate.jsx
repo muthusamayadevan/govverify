@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import api from '../api/axios';
 
 const VerifyCertificate = () => {
+  const { t, i18n } = useTranslation();
   const { referenceId: routeReferenceId } = useParams();
   const [referenceId, setReferenceId] = useState(routeReferenceId || '');
   const [loading, setLoading] = useState(false);
@@ -44,14 +46,43 @@ const VerifyCertificate = () => {
 
   return (
     <main className="min-h-screen bg-paper-50">
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
-        <div className="font-serif-display text-ink-900 text-xl">GovVerify</div>
+      <header className="bg-white border-b border-slate-200 px-6 py-4 flex justify-between items-center">
+        <Link to="/" className="font-serif-display text-ink-900 text-xl">
+          GovVerify
+        </Link>
+
+        {/* Language Switcher */}
+        <div className="flex items-center gap-2 bg-slate-100 border border-slate-200 px-3 py-1.5 rounded-full text-xs font-semibold">
+          <button
+            type="button"
+            onClick={() => i18n.changeLanguage('en')}
+            className={`cursor-pointer px-2 py-0.5 rounded transition ${
+              i18n.language.startsWith('en')
+                ? 'bg-ink-900 text-white shadow-sm'
+                : 'text-slate-600 hover:text-ink-900'
+            }`}
+          >
+            EN
+          </button>
+          <span className="text-slate-300">|</span>
+          <button
+            type="button"
+            onClick={() => i18n.changeLanguage('ta')}
+            className={`cursor-pointer px-2 py-0.5 rounded transition ${
+              i18n.language.startsWith('ta')
+                ? 'bg-ink-900 text-white shadow-sm'
+                : 'text-slate-600 hover:text-ink-900'
+            }`}
+          >
+            TA
+          </button>
+        </div>
       </header>
 
       <section className="max-w-3xl mx-auto px-6 py-10">
         <div className="mb-8">
-          <h1 className="font-serif-display text-2xl text-ink-900">Verify a Certificate</h1>
-          <p className="text-slate-500 mt-2">Enter a reference ID to check its authenticity.</p>
+          <h1 className="font-serif-display text-2xl text-ink-900">{t('verify.title')}</h1>
+          <p className="text-slate-500 mt-2">{t('verify.subtitle')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -70,10 +101,10 @@ const VerifyCertificate = () => {
 
           <button
             type="submit"
-            className="inline-flex items-center justify-center rounded-md bg-ink-900 px-5 py-2.5 text-white font-semibold hover:bg-opacity-90 transition"
+            className="inline-flex items-center justify-center rounded-md bg-ink-900 px-5 py-2.5 text-white font-semibold hover:bg-opacity-90 transition cursor-pointer"
             disabled={loading}
           >
-            {loading ? 'Checking…' : 'Verify'}
+            {loading ? 'Checking…' : t('verify.verifyButton')}
           </button>
         </form>
 
@@ -82,7 +113,7 @@ const VerifyCertificate = () => {
             <div className="rounded-lg border-2 border-verified-600 bg-verified-600/10 p-6">
               <div className="flex items-center gap-3">
                 <span className="text-verified-600 text-3xl">✓</span>
-                <h2 className="text-verified-600 text-xl font-semibold">Certificate Verified</h2>
+                <h2 className="text-verified-600 text-xl font-semibold">{t('verify.verified')}</h2>
               </div>
               <div className="mt-4 space-y-3 text-ink-900">
                 <div>
@@ -115,7 +146,7 @@ const VerifyCertificate = () => {
             <div className="rounded-lg border-2 border-seal-600 bg-seal-600/10 p-6">
               <div className="flex items-center gap-3">
                 <span className="text-seal-600 text-3xl">✗</span>
-                <h2 className="text-seal-600 text-xl font-semibold">Verification Failed</h2>
+                <h2 className="text-seal-600 text-xl font-semibold">{t('verify.verificationFailed')}</h2>
               </div>
               <p className="mt-4 text-ink-900">{result.message}</p>
             </div>

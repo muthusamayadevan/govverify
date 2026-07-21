@@ -28,6 +28,7 @@ const VerifyCertificate = () => {
   };
 
   useEffect(() => {
+    document.title = 'GovVerify | Verify Certificate';
     if (routeReferenceId) {
       setReferenceId(routeReferenceId);
       verifyCertificate(routeReferenceId);
@@ -109,7 +110,62 @@ const VerifyCertificate = () => {
         </form>
 
         <div className="mt-10 space-y-4">
-          {result && result.valid && (
+          {result && result.isRevoked && (
+            <div className="rounded-lg border-2 border-red-600 bg-red-50 p-6 shadow-md">
+              <div className="flex items-center gap-3 border-b border-red-200 pb-4">
+                <span className="text-red-600 text-3xl font-bold">⚠️</span>
+                <div>
+                  <h2 className="text-red-700 text-xl font-extrabold tracking-wide uppercase">
+                    THIS CERTIFICATE HAS BEEN REVOKED
+                  </h2>
+                  <p className="text-xs text-red-600 mt-0.5 font-medium">
+                    This official document has been marked as invalid by government issuing authority.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-4 space-y-3 text-ink-900">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Reference ID</div>
+                    <div className="font-mono font-bold text-red-900">{result.referenceId}</div>
+                  </div>
+                  <div>
+                    <div className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Certificate Type</div>
+                    <div className="font-medium capitalize">{result.certificateType}</div>
+                  </div>
+                  {result.applicantName && (
+                    <div>
+                      <div className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Applicant Name</div>
+                      <div className="font-medium">{result.applicantName}</div>
+                    </div>
+                  )}
+                  {result.issuedAt && (
+                    <div>
+                      <div className="text-xs text-slate-500 uppercase tracking-wider font-semibold">Originally Issued At</div>
+                      <div className="font-medium">{new Date(result.issuedAt).toLocaleString()}</div>
+                    </div>
+                  )}
+                </div>
+
+                {result.blockchainTxHash && (
+                  <div className="pt-2 border-t border-red-200">
+                    <div className="text-xs text-slate-500 font-semibold mb-1">Blockchain Record</div>
+                    <a
+                      href={`https://sepolia.etherscan.io/tx/${result.blockchainTxHash}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-xs font-mono text-red-700 underline break-all hover:text-red-900"
+                    >
+                      {result.blockchainTxHash}
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {result && result.valid && !result.isRevoked && (
             <div className="rounded-lg border-2 border-verified-600 bg-verified-600/10 p-6">
               <div className="flex items-center gap-3">
                 <span className="text-verified-600 text-3xl">✓</span>
@@ -142,7 +198,7 @@ const VerifyCertificate = () => {
             </div>
           )}
 
-          {result && !result.valid && (
+          {result && !result.valid && !result.isRevoked && (
             <div className="rounded-lg border-2 border-seal-600 bg-seal-600/10 p-6">
               <div className="flex items-center gap-3">
                 <span className="text-seal-600 text-3xl">✗</span>

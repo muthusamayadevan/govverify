@@ -48,6 +48,7 @@ const Register = () => {
   };
 
   useEffect(() => {
+    document.title = 'GovVerify | Register';
     const googleButtonContainer = document.getElementById('googleSignInDivRegister');
 
     const initGoogle = () => {

@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, ScanLine, Languages } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -5,6 +6,10 @@ import govverify from '../assets/govverify.png';
 
 const LandingPage = () => {
   const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    document.title = 'GovVerify — Blockchain Verification Portal';
+  }, []);
 
   return (
     <div className="min-h-screen bg-white flex flex-col font-sans">

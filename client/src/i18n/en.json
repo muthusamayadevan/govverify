@@ -65,7 +65,10 @@
     "loading": "Loading applications...",
     "statusPending": "Pending",
     "statusApproved": "Approved",
-    "statusRejected": "Rejected"
+    "statusRejected": "Rejected",
+    "reviewedBy": "Reviewed by",
+    "remarks": "Remarks",
+    "viewCertificate": "View Certificate"
   },
   "officer": {
     "welcome": "Welcome, Officer",
@@ -77,7 +80,19 @@
     "remarks": "Remarks",
     "approveButton": "Approve",
     "rejectButton": "Reject",
-    "scanToVerify": "Scan to verify this certificate"
+    "scanToVerify": "Scan QR Code to Verify Certificate",
+    "downloadPdf": "Download Certificate (PDF)",
+    "issuingCertificate": "Verifying and issuing certificate on blockchain — this may take up to 10 seconds...",
+    "processing": "Processing...",
+    "analyticsTitle": "Officer Analytics Dashboard",
+    "analyticsSubtitle": "Overview of application volume, processing metrics, and certificate type breakdown",
+    "totalApplications": "Total Applications",
+    "pendingApplications": "Pending Review",
+    "approvedApplications": "Approved Certificates",
+    "rejectedApplications": "Rejected Applications",
+    "breakdownTitle": "Breakdown by Certificate Type",
+    "reviewQueueNav": "Review Queue",
+    "analyticsNav": "Analytics Dashboard"
   },
   "verify": {
     "title": "Verify a Certificate",
@@ -85,5 +100,54 @@
     "verifyButton": "Verify",
     "verified": "Certificate Verified",
     "verificationFailed": "Verification Failed"
+  },
+  "applicationDetail": {
+    "title": "Application Details",
+    "referenceId": "Reference ID",
+    "certificateType": "Certificate Type",
+    "submittedOn": "Submitted On",
+    "status": "Status",
+    "reviewedBy": "Reviewed by",
+    "remarks": "Officer Remarks",
+    "details": "Details",
+    "documents": "Attached Documents",
+    "scanPrompt": "Scan this code or share reference ID {{referenceId}} to let anyone verify this certificate",
+    "downloadQr": "Download QR Code",
+    "downloadPdf": "Download Certificate (PDF)",
+    "pendingNotice": "QR code will be available once your application is approved",
+    "backButton": "Back to My Applications"
+  },
+  "tax": {
+    "fileTaxTitle": "File Income Tax Return",
+    "myFilingsTitle": "My Tax Filings",
+    "financialYear": "Financial Year",
+    "annualIncome": "Annual Income (₹)",
+    "deductions": "Deductions (₹)",
+    "submitButton": "Submit Tax Return",
+    "viewFilingsButton": "View My Tax Filings",
+    "filingSuccess": "Tax Return Filed Successfully!",
+    "receiptId": "Receipt ID",
+    "taxableIncome": "Taxable Income",
+    "taxPayable": "Tax Payable",
+    "noFilings": "No tax filings found.",
+    "fileTaxDesc": "File your self-service income tax return and calculate tax payable instantly.",
+    "myFilingsDesc": "View details and receipts of your submitted tax filings.",
+    "fileTaxCard": "File Tax Return",
+    "myTaxCard": "My Tax Filings"
+  },
+  "myDocuments": {
+    "title": "My Documents Vault",
+    "subtitle": "All your certificates, tax receipts, and uploaded files securely stored in GridFS",
+    "noDocuments": "No documents found in your vault",
+    "filterAll": "All Documents",
+    "filterCertificates": "Certificates",
+    "filterTax": "Tax Receipts",
+    "filterSupporting": "Uploaded Files",
+    "download": "Download File",
+    "typeCertificate": "Certificate",
+    "typeTaxReceipt": "Tax Receipt",
+    "typeSupporting": "Uploaded File",
+    "navCardTitle": "My Documents Vault",
+    "navCardDesc": "Access all your official certificates, tax receipts, and uploaded records."
   }
 }

@@ -6,11 +6,12 @@ let bucket = null;
 
 const initBucket = () => {
   if (bucket) return bucket;
-  if (!mongoose.connection.db) {
+  const db = mongoose.connection.db || (mongoose.connection.client && mongoose.connection.client.db());
+  if (!db) {
     throw new Error('MongoDB connection is not open yet');
   }
 
-  bucket = new GridFSBucket(mongoose.connection.db, {
+  bucket = new GridFSBucket(db, {
     bucketName: 'applicationDocs',
   });
 

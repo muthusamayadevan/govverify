@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-07-20T03:40:05.633Z",
+  "baseUrl": "http://localhost:5000/api",
+  "results": [
+    {
+      "operation": "Auth Login (POST /auth/login)",
+      "runs": 5,
+      "avgTimeMs": 107.08,
+      "minTimeMs": 103.26,
+      "maxTimeMs": 112.82,
+      "blockchainDependent": false,
+      "notes": "Standard JWT login"
+    },
+    {
+      "operation": "Application Submit + GridFS Upload",
+      "runs": 5,
+      "avgTimeMs": 118.84,
+      "blockchainDependent": false,
+      "notes": "Includes file stream upload to MongoDB GridFS"
+    },
+    {
+      "operation": "Fetch Citizen Apps (GET /applications/my)",
+      "runs": 5,
+      "avgTimeMs": 31.72,
+      "blockchainDependent": false,
+      "notes": "Filtered list by authenticated user ID"
+    },
+    {
+      "operation": "Fetch Officer Apps (GET /applications/officer/all)",
+      "runs": 5,
+      "avgTimeMs": 70.08,
+      "blockchainDependent": false,
+      "notes": "Heavy query returning all applications with populated user details"
+    },
+    {
+      "operation": "Blockchain Approval & Write (PATCH /applications/:id/review)",
+      "runs": 1,
+      "avgTimeMs": 8553.7,
+      "blockchainDependent": true,
+      "notes": "Includes Smart Contract execution & transaction receipt confirmation"
+    },
+    {
+      "operation": "Public Verification & Blockchain Read (GET /applications/verify/:refId)",
+      "runs": 3,
+      "avgTimeMs": 347.84,
+      "blockchainDependent": true,
+      "notes": "Includes hash lookup & verification on-chain"
+    }
+  ]
+}

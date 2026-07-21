@@ -48,6 +48,7 @@ const Login = () => {
   };
 
   useEffect(() => {
+    document.title = 'GovVerify | Login';
     const googleButtonContainer = document.getElementById('googleSignInDiv');
 
     const initGoogle = () => {

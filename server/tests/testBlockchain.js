@@ -6,7 +6,7 @@ async function main() {
     const address = contract.target || contract.address;
     console.log('Contract address:', address);
 
-    const expectedAddress = '0xdAc4250d233E3C8F2253d0DB61b83E9393b5E30d';
+    const expectedAddress = '0x95345B0e810c664C864Dc396001bb62b2c6e6E2f';
     console.log('Expected address:', expectedAddress);
 
     const testHash = hashCertificateData({

@@ -105,10 +105,27 @@ const MyApplications = () => {
                     <div className="font-mono text-sm text-slate-500">{application.referenceId}</div>
                     <div className="font-medium text-ink-900 mt-1">{application.certificateType}</div>
                     <div className="text-xs text-slate-500 mt-1">{new Date(application.createdAt).toLocaleString()}</div>
+                    {application.status !== 'pending' && application.reviewedBy?.name && (
+                      <div className="text-xs text-slate-500 mt-2">
+                        {t('myApplications.reviewedBy')}: {application.reviewedBy.name}
+                      </div>
+                    )}
+                    {application.status !== 'pending' && application.officerRemarks && (
+                      <div className="text-xs text-slate-600 italic mt-1">
+                        {t('myApplications.remarks')}: {application.officerRemarks}
+                      </div>
+                    )}
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide ${statusClass}`}>
-                    {getStatusLabel(application.status)}
-                  </span>
+                  <div className="flex flex-col items-end gap-2">
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium uppercase tracking-wide ${statusClass}`}>
+                      {getStatusLabel(application.status)}
+                    </span>
+                    {application.status === 'approved' && application.qrCodeDataUrl && (
+                      <span className="text-xs font-semibold text-ink-900 border border-slate-300 rounded-md px-2.5 py-1 bg-paper-50 hover:bg-slate-100 transition">
+                        {t('myApplications.viewCertificate')} →
+                      </span>
+                    )}
+                  </div>
                 </button>
               );
             })}

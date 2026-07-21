@@ -36,7 +36,7 @@ const applicationSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'approved', 'rejected'],
+    enum: ['pending', 'approved', 'rejected', 'revoked', 'Revoked'],
     default: 'pending',
   },
   officerRemarks: {
@@ -67,6 +67,10 @@ const applicationSchema = new mongoose.Schema({
   qrCodeDataUrl: {
     type: String,
     default: '',
+  },
+  certificatePdfFileId: {
+    type: mongoose.Schema.Types.ObjectId,
+    default: null,
   },
   createdAt: {
     type: Date,
